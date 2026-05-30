@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Server App Guide</title>
+<style>
+body{
+font-family: Arial, sans-serif;
+margin: 40px;
+background: white;
+color: #111;
+}
+h1{
+font-size: 28px;
+margin-bottom: 20px;
+}
+h2{
+font-size: 20px;
+margin-top: 30px;
+}
+summary{
+cursor: pointer;
+font-weight: bold;
+margin-top: 15px;
+}
+details{
+margin-bottom: 10px;
+}
+code{
+background: none;
+}
+</style>
+</head>
+<body>
+
+<h1>Server App Guide</h1>
+
+<h2>How to start existing apps</h2>
+<p>Run these commands on your server:</p>
+<ul>
+<li><code>systemctl start asupdates</code></li>
+<li><code>systemctl start club-tracker</code></li>
+<li><code>systemctl start glance</code></li>
+</ul>
+<p>Check status:</p>
+<ul>
+<li><code>systemctl status asupdates</code></li>
+<li><code>systemctl status club-tracker</code></li>
+<li><code>systemctl status glance</code></li>
+</ul>
+
+<details>
+<summary>How to update existing apps (git pull)</summary>
+<p>Go into the app folder:</p>
+<code>cd ~/app-name</code>
+<p>Pull latest changes:</p>
+<code>git pull</code>
+<p>Restart the service:</p>
+<code>systemctl restart app-name</code>
+<p>Example:</p>
+<code>cd ~/asupdates && git pull && systemctl restart asupdates</code>
+</details>
+
+<details>
+<summary>How to create a new app</summary>
+<p>1. Go to home directory:</p>
+<code>cd ~</code>
+<p>2. Create folder:</p>
+<code>mkdir new-app && cd new-app</code>
+<p>3. Set up Python environment:</p>
+<code>python3 -m venv venv</code>
+<p>4. Install requirements:</p>
+<code>./venv/bin/pip install -r requirements.txt</code>
+<p>5. Create systemd service:</p>
+<code>nano /etc/systemd/system/new-app.service</code>
+<p>6. Add service:</p>
+<code>
+[Unit]
+Description=New App
+After=network.target
+
+[Service]
+WorkingDirectory=/root/new-app
+ExecStart=/root/new-app/venv/bin/python app.py
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
+</code>
+<p>7. Enable and start:</p>
+<code>systemctl daemon-reload && systemctl enable new-app && systemctl start new-app</code>
+</details>
+
+</body>
+</html>
